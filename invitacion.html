@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2b0f3f" />
+  <title>¿Querés ser mi Valentín? V2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lila: #b57edc;
+      --lila-soft: #e8d9f5;
+      --rojo: #d7263d;
+      --rosa: #ff6f91;
+      --fondo: linear-gradient(135deg, #2b0f3f, #5b1d6b);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background: var(--fondo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    body.has-gallery {
+      overflow-y: auto;
+      align-items: flex-start;
+      padding: 1rem 0 2.5rem;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem 2rem 3rem;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      text-align: center;
+      position: relative;
+      animation: fadeIn 1.5s ease;
+      overflow: visible;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+
+    .message {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      display: none;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    /* Ajustes móvil: panel izquierdo (card) y galería */
+    @media (max-width: 480px) {
+      body {
+        padding: 0.75rem 1rem;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+
+      body.has-gallery {
+        padding: 0.75rem 1rem 2rem;
+      }
+
+      .card {
+        padding: 1.5rem 1.25rem 2rem;
+        border-radius: 20px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.25;
+      }
+
+      .card p {
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.45;
+      }
+
+      .heart {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .message {
+        font-size: 1rem;
+        margin-top: 1.5rem;
+        line-height: 1.5;
+      }
+
+      .gallery-section {
+        padding: 0 0.75rem;
+        margin-top: 1.25rem;
+      }
+
+      .gallery-title {
+        font-size: 1.25rem;
+      }
+
+      .gallery-subtitle {
+        font-size: 0.85rem !important;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .card {
+        padding: 1.25rem 1rem 1.75rem;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+    }
+
+    .heart {
+      font-size: 3rem;
+      animation: heartbeat 1.5s infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      position: relative;
+      min-height: 110px;
+    }
+
+    button {
+      padding: 0.65rem 1.25rem;
+      font-size: 0.95rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      line-height: 1.3;
+    }
+
+    .yes {
+      background: linear-gradient(135deg, var(--rosa), var(--rojo));
+      color: white;
+      box-shadow: 0 10px 30px rgba(215,38,61,0.4);
+      -webkit-tap-highlight-color: transparent;
+      width: 100%;
+      max-width: 260px;
+      flex-shrink: 0;
+    }
+
+    .no {
+      background: rgba(255,255,255,0.25);
+      color: white;
+      position: absolute;
+      left: 50%;
+      top: 58px;
+      transform: translate(-50%, 0);
+      transition: transform 0.15s ease-out;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      pointer-events: auto;
+      width: 100%;
+      max-width: 260px;
+      padding: 0.65rem 1.25rem;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+    }
+
+    /* Galería de momentos: oculta inicialmente */
+    .gallery-section {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      margin-top: 1.5rem;
+      padding: 0 1rem;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .gallery-section.visible {
+      display: block;
+    }
+
+    .gallery-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, #ffb3b8, #fad0c4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.4;
+    }
+
+    .gallery-photos {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.25rem;
+      perspective: 800px;
+    }
+
+    /* Polaroid individual en la galería */
+    .polaroid-item {
+      padding: 10px 10px 32px 10px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow:
+        0 4px 6px rgba(0,0,0,0.1),
+        0 12px 30px rgba(0,0,0,0.2),
+        0 0 0 1px rgba(255,255,255,0.1);
+      position: relative;
+      max-width: 140px;
+      animation: polaroidReveal 0.6s ease backwards;
+    }
+
+    .polaroid-item:nth-child(1) { transform: rotate(-4deg); animation-delay: 0.1s; }
+    .polaroid-item:nth-child(2) { transform: rotate(3deg); animation-delay: 0.2s; }
+    .polaroid-item:nth-child(3) { transform: rotate(-2deg); animation-delay: 0.3s; }
+    .polaroid-item:nth-child(4) { transform: rotate(2deg); animation-delay: 0.4s; }
+    .polaroid-item:nth-child(5) { transform: rotate(-3deg); animation-delay: 0.5s; }
+    .polaroid-item:nth-child(6) { transform: rotate(1deg); animation-delay: 0.6s; }
+
+    .polaroid-item::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 65%;
+      height: 16px;
+      background: rgba(255,236,179,0.7);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+      z-index: 1;
+    }
+
+    .polaroid-item .polaroid-img {
+      width: 100%;
+      display: block;
+      border-radius: 2px;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .polaroid-item .polaroid-caption {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      color: #5b1d6b;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    @keyframes polaroidReveal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Corazones flotando */
+    .floating-heart {
+      position: absolute;
+      bottom: -40px;
+      font-size: 1.2rem;
+      opacity: 0.7;
+      animation: floatUp linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0) translateX(0); opacity: 0; }
+      10% { opacity: 0.7; }
+      to { transform: translateY(-120vh) translateX(40px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="heart">💜❤️</div>
+    <h1>¿Querés ser mi San Valentín?</h1>
+    <p>Prometo risas, abrazos, besos y muchos momentos bonitos juntos ✨</p>
+
+    <div class="buttons">
+      <button class="yes" onclick="sayYes()">Sí, obvio 💖</button>
+      <button class="no" id="noBtn">No 🙈</button>
+    </div>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <section class="gallery-section" id="gallerySection">
+    <h2 class="gallery-title">Por crear más momentos juntos 💕</h2>
+    <p class="gallery-subtitle" style="text-align:center; opacity:0.9; font-size:0.9rem; margin-bottom:1.25rem;">Cada instante con vos es un recuerdo que guardo para siempre</p>
+    <div class="gallery-photos" id="galleryPhotos"></div>
+  </section>
+
+  <script>
+    const message = document.getElementById('message');
+    const noBtn = document.getElementById('noBtn');
+    const gallerySection = document.getElementById('gallerySection');
+    const galleryPhotos = document.getElementById('galleryPhotos');
+
+    // Fotos: cambia estos nombres por tus imágenes (foto1.jpg, foto2.jpg, etc.)
+    // objectPosition opcional: ajusta el encuadre (ej: '40% center' = imagen más a la izq, 'center 25%' = muestra más la parte de arriba)
+    const fotos = [
+      { src: 'foto1.jpg', caption: 'Vos y yo 💜' },
+      { src: 'foto2.jpg', caption: 'Juntos', objectPosition: '65% center' },
+      { src: 'foto3.jpg', caption: 'Para siempre' },
+      { src: 'foto4.jpg', caption: 'Amandonos' },
+      { src: 'foto5.jpg', caption: 'Juntos siempre', objectPosition: 'center 25%' },
+      { src: 'foto6.jpg', caption: 'Por muchos más 💕' }
+    ];
+
+    function sayYes() {
+      document.querySelector('.card').classList.add('said-yes');
+      message.style.display = 'block';
+      message.innerHTML = '💞 Sabía que ibas a decir que sí. Gracias a vos por hacer mi vida más bonita 💞';
+      createHearts(40);
+
+      // Ocultar botones y mostrar galería
+      document.querySelector('.buttons').style.display = 'none';
+      gallerySection.classList.add('visible');
+      document.body.classList.add('has-gallery');
+
+      // Generar polaroids
+      fotos.forEach((foto, i) => {
+        const item = document.createElement('div');
+        item.className = 'polaroid-item';
+        const imgStyle = foto.objectPosition ? `style="object-position: ${foto.objectPosition}"` : '';
+        item.innerHTML = `
+          <img src="${foto.src}" alt="${foto.caption}" class="polaroid-img" ${imgStyle} onerror="this.onerror=null;this.style.background='linear-gradient(135deg,#e8d9f5,#fad0c4)';this.style.minHeight='120px';">
+          <span class="polaroid-caption">${foto.caption}</span>
+        `;
+        galleryPhotos.appendChild(item);
+      });
+    }
+
+    function moveNoButton() {
+      const card = noBtn.closest('.card');
+      const rect = card ? card.getBoundingClientRect() : { width: 300, height: 400 };
+      const maxX = Math.max(80, rect.width / 2 - 60);
+      const maxY = Math.max(60, rect.height / 2 - 30);
+      const x = (Math.random() * 2 - 1) * maxX;
+      const y = (Math.random() * 2 - 1) * maxY;
+      noBtn.style.transform = `translate(calc(-50% + ${x}px), ${y}px)`;
+    }
+
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      moveNoButton();
+    });
+
+    function createHearts(count) {
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add('floating-heart');
+        heart.innerText = Math.random() > 0.5 ? '❤️' : '💜';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = 4 + Math.random() * 4 + 's';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 8000);
+      }
+    }
+  </script>
+</body>
+</html>
